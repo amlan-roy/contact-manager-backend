@@ -1,5 +1,6 @@
 {
   "name": "contact-manager-backend-api",
+  "type": "module",
   "version": "1.0.0",
   "description": "This is an express project for contact manager backend api",
   "main": "server.js",
