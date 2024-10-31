@@ -1,22 +1,19 @@
-// import { ERROR_CODES } from "../constants/constants";
+import { ERROR_CODE_TO_ERROR_TITLE_MAP } from "../constants/constants.js";
 
 const errorHandler = (err, req, res, next) => {
   const { statusCode = 500 } = res || {};
 
-  switch (statusCode) {
-    case 400:
-      res.json({
-        title: "Not Found",
-        message: err.message,
-        stackTrace: err.stack,
-      });
-      break;
-    default:
-      res.json({
-        title: "Not Found",
-        message: err.message,
-        stackTrace: err.stack,
-      });
+  let errorTitle = ERROR_CODE_TO_ERROR_TITLE_MAP[statusCode];
+
+  if (!errorTitle) {
+    console.log("No error found.");
+    next();
+  } else {
+    res.json({
+      title: errorTitle,
+      message: err.message,
+      stackTrace: err.stack,
+    });
   }
 };
 
