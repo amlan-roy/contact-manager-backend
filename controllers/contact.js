@@ -1,27 +1,29 @@
+import asyncHandler from "express-async-handler";
+
 /**
  * @description Get all contacts
  * @route GET /api/contacts
  * @access public
  */
-const getContacts = (req, res) => {
+const getContacts = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Get all contacts" });
-};
+});
 
 /**
  * @description Get a contact
  * @route GET /api/contacts/:id
  * @access public
  */
-const getContact = (req, res) => {
+const getContact = asyncHandler(async (req, res) => {
   res.status(200).json({ message: `Get contact with id: ${req.params.id}` });
-};
+});
 
 /**
  * @description create a new contact
  * @route POST /api/contacts
  * @access public
  */
-const createContact = (req, res) => {
+const createContact = asyncHandler(async (req, res) => {
   const { name, email, phone } = req.body || {};
 
   const fieldsMissing = !name || !email || !phone;
@@ -31,24 +33,24 @@ const createContact = (req, res) => {
   }
 
   res.status(201).json({ message: "Create contact" });
-};
+});
 
 /**
  * @description update a contact
  * @route UPDATE /api/contacts/:id
  * @access public
  */
-const updateContact = (req, res) => {
+const updateContact = asyncHandler(async (req, res) => {
   res.status(200).json({ message: `Update contact with id: ${req.params.id}` });
-};
+});
 
 /**
  * @description delete contact
  * @route DELETE /api/contacts/:id
  * @access public
  */
-const deleteContact = (req, res) => {
+const deleteContact = asyncHandler(async (req, res) => {
   res.status(200).json({ message: `Delete contact with id: ${req.params.id}` });
-};
+});
 
 export { getContact, getContacts, createContact, updateContact, deleteContact };

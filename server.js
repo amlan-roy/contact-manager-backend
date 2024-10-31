@@ -2,8 +2,10 @@ import express, { json } from "express";
 import errorHandler from "./middleware/errorHandler.js";
 import dotenv from "dotenv";
 import contactRoutesRouter from "./routes/contactRoutes.js";
+import { connectDb } from "./config/dbConnection.js";
 const dotenvConfig = dotenv.config();
 
+connectDb();
 const app = express();
 
 const port = process.env.PORT || 5000;
