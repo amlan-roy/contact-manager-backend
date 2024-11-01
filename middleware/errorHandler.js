@@ -1,4 +1,7 @@
-import { ERROR_CODE_TO_ERROR_TITLE_MAP } from "../constants/constants.js";
+import {
+  ERROR_CODE_TO_ERROR_TITLE_MAP,
+  ERROR_TITLES,
+} from "../constants/constants.js";
 
 const errorHandler = (err, req, res, next) => {
   const { statusCode = 500 } = res || {};
@@ -6,7 +9,19 @@ const errorHandler = (err, req, res, next) => {
   let errorTitle = ERROR_CODE_TO_ERROR_TITLE_MAP[statusCode];
 
   if (!errorTitle) {
-    console.log("No error found.");
+    res.status(500);
+    const env = process.env.NODE_ENV || "development";
+    const stackTrace =
+      env === "development"
+        ? {
+            message: err.message,
+            stackTrace: err.stack,
+          }
+        : {};
+    res.json({
+      title: ERROR_TITLES.DEFAULT,
+      ...stackTrace,
+    });
     next();
   } else {
     res.json({
