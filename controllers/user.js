@@ -1,6 +1,10 @@
 import asyncHandler from "express-async-handler";
 import UserModel from "../models/userModel.js";
-import { encryptPassword } from "./../helpers/encyption.js";
+import {
+  encryptPassword,
+  pwdAndEncryptedPwdSame,
+} from "./../helpers/encyption.js";
+import jwt from "jsonwebtoken";
 
 /**
  * @description Register a user
@@ -46,7 +50,6 @@ const registerUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("User data is not valid");
   }
-  // res.status(200).json({ message: "User registered" });
 });
 
 /**
@@ -55,8 +58,35 @@ const registerUser = asyncHandler(async (req, res) => {
  * @access public
  */
 const loginUser = asyncHandler(async (req, res) => {
-  // const contacts = await ContactModel.find();
-  res.status(200).json({ message: "User login" });
+  const { email, password } = req.body;
+  if (!email || !password) {
+    res.status(400);
+    throw new Error("All fields mandatory!");
+  }
+
+  const user = await UserModel.findOne({ email });
+
+  const userPassword = user.password;
+
+  const userPasswordValid =
+    user && (await pwdAndEncryptedPwdSame(password, userPassword));
+  if (userPasswordValid) {
+    const accessToken = jwt.sign(
+      {
+        user: {
+          username: user.username,
+          email: user.email,
+          id: user.id,
+        },
+      },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "15m" }
+    );
+    res.status(200).json({ accessToken });
+  } else {
+    res.status(401);
+    throw new Error("Email or passwordis not valid");
+  }
 });
 
 /**
@@ -65,8 +95,12 @@ const loginUser = asyncHandler(async (req, res) => {
  * @access public
  */
 const getCurrentUser = asyncHandler(async (req, res) => {
-  // const contacts = await ContactModel.find();
-  res.status(200).json({ message: "Current user information" });
+  const user = req.user;
+  if (!user) {
+    res.status(400);
+    throw new Error("An error occurred while fetching the user!");
+  }
+  res.status(200).json(req.user);
 });
 
 export { registerUser, loginUser, getCurrentUser };

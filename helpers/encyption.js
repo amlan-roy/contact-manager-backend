@@ -11,8 +11,8 @@ const encryptPassword = async (pwd) => {
 };
 
 const pwdAndEncryptedPwdSame = async (pwd, encryptedPwd) => {
-  const hashedPwd = await encryptPassword(pwd);
-  return hashedPwd === encryptedPwd;
+  const passwordsSame = await bcrypt.compare(pwd, encryptedPwd);
+  return passwordsSame;
 };
 
 export { encryptPassword, pwdAndEncryptedPwdSame };

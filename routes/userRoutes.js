@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { validateToken } from "../middleware/tokenValidationHandler.js";
 const router = Router();
 
 import {
@@ -9,6 +10,6 @@ import {
 
 router.route("/register").post(registerUser);
 router.route("/login").post(loginUser);
-router.route("/current").get(getCurrentUser);
+router.route("/current").get(validateToken, getCurrentUser);
 
 export default router;
