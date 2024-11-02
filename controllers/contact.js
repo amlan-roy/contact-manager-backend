@@ -4,20 +4,23 @@ import ContactModel from "../models/contactModel.js";
 /**
  * @description Get all contacts
  * @route GET /api/contacts
- * @access public
+ * @access private
  */
 const getContacts = asyncHandler(async (req, res) => {
-  const contacts = await ContactModel.find();
+  const contacts = await ContactModel.find({ user_id: req.user.id });
   res.status(200).json(contacts);
 });
 
 /**
  * @description Get a contact
  * @route GET /api/contacts/:id
- * @access public
+ * @access private
  */
 const getContact = asyncHandler(async (req, res) => {
-  const contact = await ContactModel.findById(req.params.id);
+  const contact = await ContactModel.findOne({
+    user_id: req.user.id,
+    _id: req.params.id,
+  });
   if (!contact) {
     res.status(404);
     throw new Error("Contact not found!");
@@ -28,7 +31,7 @@ const getContact = asyncHandler(async (req, res) => {
 /**
  * @description create a new contact
  * @route POST /api/contacts
- * @access public
+ * @access private
  */
 const createContact = asyncHandler(async (req, res) => {
   const { name, email, phone } = req.body || {};
@@ -47,6 +50,7 @@ const createContact = asyncHandler(async (req, res) => {
     name,
     email,
     phone,
+    user_id: req.user.id,
   });
 
   res.status(201).json(contact);
@@ -55,10 +59,13 @@ const createContact = asyncHandler(async (req, res) => {
 /**
  * @description update a contact
  * @route PUT /api/contacts/:id
- * @access public
+ * @access private
  */
 const updateContact = asyncHandler(async (req, res) => {
-  const contact = await ContactModel.findById(req.params.id);
+  const contact = await ContactModel.findOne({
+    user_id: req.user.id,
+    _id: req.params.id,
+  });
   if (!contact) {
     res.status(404);
     throw new Error("Contact not found!");
@@ -66,7 +73,11 @@ const updateContact = asyncHandler(async (req, res) => {
 
   const updatedContact = await ContactModel.findByIdAndUpdate(
     req.params.id,
-    req.body,
+    {
+      name,
+      email,
+      phone,
+    },
     { new: true }
   );
   res.status(200).json(updatedContact);
@@ -75,10 +86,13 @@ const updateContact = asyncHandler(async (req, res) => {
 /**
  * @description delete contact
  * @route DELETE /api/contacts/:id
- * @access public
+ * @access private
  */
 const deleteContact = asyncHandler(async (req, res) => {
-  const contact = await ContactModel.findById(req.params.id);
+  const contact = await ContactModel.findOne({
+    user_id: req.user.id,
+    _id: req.params.id,
+  });
   if (!contact) {
     res.status(404);
     throw new Error("Contact not found!");
